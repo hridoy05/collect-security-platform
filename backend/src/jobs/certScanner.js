@@ -1,5 +1,5 @@
 // ============================================================
-// Certificate Scanner Job — Topic 7: CBOM auto-discovery
+// Certificate Scanner Job 
 // Scans TLS certificates and updates CBOM
 // Runs every hour via cron
 // ============================================================
