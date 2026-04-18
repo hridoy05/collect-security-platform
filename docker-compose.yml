@@ -1,0 +1,148 @@
+services:
+  # ─────────────────────────────────────
+  # ELASTICSEARCH — core storage engine
+  # ─────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: connect-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - connect-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9200" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ─────────────────────────────────────
+  # LOGSTASH — log ingestion + parsing
+  # ─────────────────────────────────────
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: connect-logstash
+    volumes:
+      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports:
+      - "5044:5044" # Beats input
+      - "5000:5000" # TCP syslog
+      - "9600:9600" # Logstash API
+    environment:
+      - LS_JAVA_OPTS=-Xmx512m -Xms512m
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - connect-network
+
+  # ─────────────────────────────────────
+  # KIBANA — visualization
+  # ─────────────────────────────────────
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: connect-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SECURITY_ENABLED=false
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - connect-network
+
+  # ─────────────────────────────────────
+  # POSTGRESQL — structured data storage
+  # ─────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: connect-postgres
+    environment:
+      POSTGRES_DB: connect_security
+      POSTGRES_USER: connect_admin
+      POSTGRES_PASSWORD: connect_secret_2024
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - connect-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U connect_admin -d connect_security" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────
+  # NODE.JS BACKEND — API + services
+  # ─────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: connect-backend
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      DATABASE_URL: postgresql://connect_admin:connect_secret_2024@postgres:5432/connect_security
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      JWT_SECRET: connect_jwt_secret_super_secure_2024
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - connect-network
+    command: npm run dev
+
+  # ─────────────────────────────────────
+  # REACT FRONTEND — dashboard UI
+  # ─────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: connect-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:4000
+      VITE_WS_URL: ws://localhost:4000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - connect-network
+
+volumes:
+  esdata:
+    driver: local
+  pgdata:
+    driver: local
+
+networks:
+  connect-network:
+    driver: bridge

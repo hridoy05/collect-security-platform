@@ -1,0 +1,143 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+model User {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String    @unique @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  role       String?   @default("analyst") @db.VarChar(50)
+  fullName   String?   @map("full_name") @db.VarChar(255)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  lastLogin  DateTime? @map("last_login") @db.Timestamptz
+  isActive   Boolean?  @default(true) @map("is_active")
+
+  auditLogs  AuditLog[]
+
+  @@map("users")
+}
+
+model CryptoAsset {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId         String    @unique @map("asset_id") @db.VarChar(255)
+  assetType       String    @map("asset_type") @db.VarChar(100)
+  algorithm       String    @db.VarChar(100)
+  keyLength       Int?      @map("key_length")
+  hashAlgorithm   String?   @map("hash_algorithm") @db.VarChar(100)
+  systemName      String    @map("system_name") @db.VarChar(255)
+  environment     String?   @default("production") @db.VarChar(50)
+  ownerTeam       String?   @map("owner_team") @db.VarChar(255)
+  issuer          String?   @db.VarChar(255)
+  expiryDate      DateTime? @map("expiry_date") @db.Timestamptz
+  daysToExpiry    Int?      @map("days_to_expiry")
+  lastRotated     DateTime? @map("last_rotated") @db.Timestamptz
+  rotationPolicy  String?   @map("rotation_policy") @db.VarChar(100)
+  quantumSafe     Boolean?  @default(false) @map("quantum_safe")
+  riskRating      String?   @default("amber") @map("risk_rating") @db.VarChar(20)
+  issues          String?
+  notes           String?
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("crypto_assets")
+}
+
+model SecurityAlert {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  alertId        String    @unique @map("alert_id") @db.VarChar(255)
+  title          String    @db.VarChar(500)
+  description    String?
+  severity       String    @db.VarChar(20)
+  status         String?   @default("open") @db.VarChar(50)
+  sourceType     String?   @map("source_type") @db.VarChar(100)
+  sourceIp       String?   @map("source_ip") @db.Inet
+  destIp         String?   @map("dest_ip") @db.Inet
+  affectedUser   String?   @map("affected_user") @db.VarChar(255)
+  affectedSystem String?   @map("affected_system") @db.VarChar(255)
+  mitreTactic    String?   @map("mitre_tactic") @db.VarChar(255)
+  mitreTechnique String?   @map("mitre_technique") @db.VarChar(255)
+  alertScore     Decimal?  @map("alert_score") @db.Decimal(5, 2)
+  esIndex        String?   @map("es_index") @db.VarChar(255)
+  rawEvent       Json?     @map("raw_event")
+  threatIntel    Json?     @map("threat_intel")
+  assignedTo     String?   @map("assigned_to") @db.VarChar(255)
+  resolvedAt     DateTime? @map("resolved_at") @db.Timestamptz
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("security_alerts")
+}
+
+model ThreatIndicator {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  iocType     String    @map("ioc_type") @db.VarChar(100)
+  iocValue    String    @map("ioc_value") @db.VarChar(1000)
+  threatActor String?   @map("threat_actor") @db.VarChar(255)
+  campaign    String?   @db.VarChar(255)
+  confidence  Int?      @default(50)
+  severity    String?   @db.VarChar(20)
+  source      String?   @db.VarChar(255)
+  tags        String[]
+  firstSeen   DateTime? @map("first_seen") @db.Timestamptz
+  lastSeen    DateTime? @map("last_seen") @db.Timestamptz
+  isActive    Boolean?  @default(true) @map("is_active")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("threat_indicators")
+}
+
+model CveTracking {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cveId          String    @unique @map("cve_id") @db.VarChar(50)
+  cvssScore      Decimal?  @map("cvss_score") @db.Decimal(3, 1)
+  cvssSeverity   String?   @map("cvss_severity") @db.VarChar(20)
+  epssScore      Decimal?  @map("epss_score") @db.Decimal(5, 4)
+  isKev          Boolean?  @default(false) @map("is_kev")
+  description    String?
+  affectedProduct String?   @map("affected_product") @db.VarChar(500)
+  patchAvailable Boolean?  @default(false) @map("patch_available")
+  patchedAt      DateTime? @map("patched_at") @db.Timestamptz
+  status         String?   @default("open") @db.VarChar(50)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("cve_tracking")
+}
+
+model AuditLog {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String?   @map("user_id") @db.Uuid
+  action     String    @db.VarChar(255)
+  resource   String?   @db.VarChar(255)
+  resourceId String?   @map("resource_id") @db.VarChar(255)
+  ipAddress  String?   @map("ip_address") @db.Inet
+  userAgent  String?   @map("user_agent")
+  details    Json?
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  user       User?     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model MlAnomaly {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  modelType    String    @map("model_type") @db.VarChar(100)
+  entityType   String?   @map("entity_type") @db.VarChar(100)
+  entityValue  String?   @map("entity_value") @db.VarChar(500)
+  anomalyScore Decimal?  @map("anomaly_score") @db.Decimal(5, 4)
+  threshold    Decimal?  @db.Decimal(5, 4)
+  isAnomaly    Boolean?  @default(false) @map("is_anomaly")
+  features     Json?
+  description  String?
+  alertCreated Boolean?  @default(false) @map("alert_created")
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("ml_anomalies")
+}

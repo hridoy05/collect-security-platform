@@ -1,0 +1,38 @@
+{
+  "name": "connect-security-backend",
+  "version": "1.0.0",
+  "description": "Connect Security Analytics Platform - Backend API",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "db:migrate": "node src/scripts/migrate.js",
+    "db:seed": "node src/scripts/seed.js",
+    "simulate:bruteforce": "node src/scripts/simulate/bruteforce.js",
+    "simulate:dnstunnel": "node src/scripts/simulate/dnsTunnel.js",
+    "simulate:exfil": "node src/scripts/simulate/exfiltration.js",
+    "ml:detect": "node src/scripts/runMlDetection.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-kms": "^3.500.0",
+    "@elastic/elasticsearch": "^8.12.0",
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.3",
+    "pg": "^8.11.3",
+    "socket.io": "^4.6.1",
+    "uuid": "^9.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "prisma": "^6.19.3"
+  }
+}
