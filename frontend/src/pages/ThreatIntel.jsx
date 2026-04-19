@@ -33,7 +33,7 @@ export default function ThreatIntel() {
     <div className="p-8 max-w-[1400px]">
       <div className="mb-8">
         <h1 className="font-mono uppercase tracking-ui text-2xl text-white">Threat Intelligence</h1>
-        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">IOC & CVE Enrichment · Topic 6</p>
+        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">IOC & CVE Enrichment</p>
       </div>
 
       <Card className="mb-8">

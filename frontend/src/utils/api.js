@@ -42,7 +42,8 @@ export const api = {
   me:    ()                => req('/api/auth/me'),
 
   // Dashboard
-  dashboardStats: () => req('/api/dashboard/stats'),
+  dashboardStats:  () => req('/api/dashboard/stats'),
+  dashboardCharts: () => req('/api/dashboard/charts'),
 
   // CBOM
   cbom:        (path = '') => req(`/api/cbom${path}`),

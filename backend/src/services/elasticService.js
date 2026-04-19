@@ -84,6 +84,25 @@ function getMappingForIndex(index) {
     };
   }
 
+  if (index === ES_INDICES.SECURITY_EVENTS) {
+    return {
+      properties: {
+        '@timestamp':  { type: 'date' },
+        source_ip:     { type: 'ip' },
+        dest_ip:       { type: 'ip' },
+        event_type:    { type: 'keyword' },
+        event_outcome: { type: 'keyword' },
+        severity:      { type: 'keyword' },
+        country:       { type: 'keyword' },
+        target_user:   { type: 'keyword' },
+        description:   { type: 'text', fields: { keyword: { type: 'keyword' } } },
+        dns_query:     { type: 'keyword' },
+        auth_result:   { type: 'keyword' },
+        'user.name':   { type: 'keyword' }
+      }
+    };
+  }
+
   if (index === ES_INDICES.APP_LOGS) {
     return {
       properties: {
@@ -91,7 +110,7 @@ function getMappingForIndex(index) {
         level: { type: 'keyword' },
         message: { type: 'text', fields: { keyword: { type: 'keyword' } } },
         service: { type: 'keyword' },
-        metadata: { type: 'object', enabled: false } // flexible for different log shapes
+        metadata: { type: 'object', enabled: false }
       }
     };
   }
@@ -154,7 +173,7 @@ async function correlateEvents(timeWindowMinutes = 10) {
           terms: { field: 'source_ip', size: 50 },
           aggs: {
             failure_count: { value_count: { field: 'source_ip' } },
-            unique_users: { cardinality: { field: 'target_user' } }
+            unique_users: { cardinality: { field: 'target_user' } }  // keyword — safe for agg
           }
         }
       },
@@ -255,7 +274,7 @@ async function getDashboardStats() {
           terms: { field: 'event_type', size: 20 }
         },
         top_source_ips: {
-          terms: { field: 'source_ip', size: 10 }
+          terms: { field: 'source_ip', size: 10 }  // ip type — fine for terms agg
         },
         severity_distribution: {
           terms: { field: 'severity', size: 5 }

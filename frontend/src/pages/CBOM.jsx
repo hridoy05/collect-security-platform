@@ -45,7 +45,7 @@ export default function CBOM() {
     <div className="p-8 max-w-[1600px]">
       <div className="mb-8">
         <h1 className="font-mono uppercase tracking-ui text-2xl text-white">Crypto Asset Inventory</h1>
-        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">CBOM · Topics 1 · 2 · 7</p>
+        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">CBOM </p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mb-8">

@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const prisma = require('../config/prismaClient');
 const { esClient, ES_INDICES, correlateEvents } = require('../services/elasticService');
+const { detectBruteForce } = require('../services/mlService');
 
 /**
  * @desc    Get all alerts with filtering
@@ -113,18 +114,29 @@ const runCorrelation = asyncHandler(async (req, res) => {
 
   const createdAlerts = [];
   for (const activity of suspiciousActivity) {
+    // Build minimal synthetic event array so detectBruteForce() can score the aggregated data
+    const syntheticEvents = Array.from({ length: Math.min(activity.failureCount, 500) }, (_, i) => ({
+      sourceIP: activity.ip,
+      timestamp: new Date(),
+      success: false,
+      userId: `user_${i % Math.max(activity.uniqueUsers, 1)}`
+    }));
+    const mlResults = detectBruteForce(syntheticEvents, 10);
+    const mlScore = mlResults[0]?.score ?? Math.min(activity.failureCount / 100, 1.0);
+    const mlSeverity = mlResults[0]?.severity ?? (activity.uniqueUsers > 5 ? 'critical' : 'high');
+
     const savedAlert = await prisma.securityAlert.create({
       data: {
-        alertId: `CORR-${Date.now()}`,
+        alertId: `CORR-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
         title: `${activity.attackType === 'credential_stuffing' ? 'Credential Stuffing' : 'Brute Force'} Attack Detected`,
         description: `${activity.failureCount} failed logins from ${activity.ip} targeting ${activity.uniqueUsers} unique accounts`,
-        severity: activity.uniqueUsers > 5 ? 'critical' : 'high',
+        severity: mlSeverity,
         status: 'open',
         sourceType: 'siem_correlation',
         sourceIp: activity.ip,
         mitreTactic: 'Credential Access',
         mitreTechnique: 'T1110 — Brute Force',
-        alertScore: Math.min(activity.failureCount / 100, 1.0) * 100
+        alertScore: mlScore * 100
       }
     });
 

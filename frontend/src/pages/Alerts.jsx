@@ -65,7 +65,7 @@ export default function Alerts() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-mono uppercase tracking-ui text-2xl text-white">SIEM Alerts</h1>
-          <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">Real-time Correlation · Topic 5</p>
+          <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">Real-time Correlation</p>
         </div>
         <Button variant="secondary" onClick={correlate} disabled={correlating}>
           {correlating ? 'Running...' : 'Run Correlation'}

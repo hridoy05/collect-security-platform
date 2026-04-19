@@ -22,11 +22,12 @@ const networkRoutes = require('./routes/network');
 // Services
 const { initElasticsearch } = require('./services/elasticService');
 const { startCertScanner } = require('./jobs/certScanner');
+const { startSiemCorrelator } = require('./jobs/siemCorrelator');
 const { auditMiddleware } = require('./middleware/audit');
 const prisma = require('./config/prismaClient');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 const logger = require('./services/loggerService');
-const { getDashboardStats } = require('./controllers/dashboardController');
+const { getDashboardStats, getDashboardCharts } = require('./controllers/dashboardController');
 const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
@@ -114,8 +115,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Dashboard stats endpoint
-app.get('/api/dashboard/stats', authenticateToken, getDashboardStats);
+// Dashboard endpoints
+app.get('/api/dashboard/stats',  authenticateToken, getDashboardStats);
+app.get('/api/dashboard/charts', authenticateToken, getDashboardCharts);
 
 // ─────────────────────────
 // Error Handling
@@ -137,6 +139,9 @@ async function start() {
     // Start background jobs
     startCertScanner(io);
     logger.info('✅ Certificate scanner started');
+
+    startSiemCorrelator(io);
+    logger.info('✅ SIEM correlator started');
 
     server.listen(PORT, () => {
       logger.info(`Connect Security Platform API running on port ${PORT}`);

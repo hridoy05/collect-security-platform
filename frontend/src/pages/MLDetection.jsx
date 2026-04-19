@@ -57,7 +57,7 @@ export default function MLDetection() {
     <div className="p-8 max-w-[1400px]">
       <div className="mb-8">
         <h1 className="font-mono uppercase tracking-ui text-2xl text-white">ML Anomaly Detection</h1>
-        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">Z-Score · Isolation Forest · UEBA · Topic 8</p>
+        <p className="font-mono uppercase tracking-ui text-[10px] text-[#999] mt-1">Z-Score · Isolation Forest · UEBA ·</p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">

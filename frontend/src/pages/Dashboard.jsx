@@ -7,29 +7,29 @@ import { StatCard } from '../components/ui/StatCard';
 import { Card, CardTitle, CardContent } from '../components/ui/Card';
 import { api } from '../utils/api';
 
-const MOCK_TIMELINE = Array.from({ length: 24 }, (_, i) => ({
+const FALLBACK_TIMELINE = Array.from({ length: 24 }, (_, i) => ({
   h: `${i}:00`,
-  events: Math.floor(Math.random() * 400 + 100),
-  alerts: Math.floor(Math.random() * 20 + 2),
+  events: [120,95,80,70,60,55,65,110,180,220,310,290,340,300,280,260,310,330,290,250,200,170,140,110][i],
+  alerts: [3,2,1,1,1,2,3,4,7,9,12,11,14,12,11,10,13,14,11,9,8,6,5,4][i],
 }));
 
-const MOCK_ATTACK = [
+const FALLBACK_ATTACK = [
   { name: 'Brute Force', value: 35 },
-  { name: 'DNS Tunnel', value: 18 },
-  { name: 'Port Scan', value: 22 },
-  { name: 'Exfil', value: 12 },
-  { name: 'Other', value: 13 },
+  { name: 'DNS Tunnel',  value: 18 },
+  { name: 'Port Scan',   value: 22 },
+  { name: 'Exfil',       value: 12 },
+  { name: 'Other',       value: 13 },
 ];
 const ATTACK_COLORS = ['#fc4d4d', '#f6ad55', '#63b3ed', '#9f7aea', '#999'];
 
-const MOCK_MITRE = [
-  { tactic: 'Initial Access', count: 12 },
-  { tactic: 'Execution', count: 8 },
-  { tactic: 'Persistence', count: 6 },
-  { tactic: 'Priv Esc', count: 4 },
+const FALLBACK_MITRE = [
+  { tactic: 'Initial Access',  count: 12 },
+  { tactic: 'Execution',       count: 8 },
+  { tactic: 'Persistence',     count: 6 },
+  { tactic: 'Priv Esc',        count: 4 },
   { tactic: 'Defense Evasion', count: 9 },
-  { tactic: 'Exfiltration', count: 5 },
-  { tactic: 'C2', count: 7 },
+  { tactic: 'Exfiltration',    count: 5 },
+  { tactic: 'C2',              count: 7 },
 ];
 
 const TT = {
@@ -38,10 +38,18 @@ const TT = {
 };
 
 export default function Dashboard() {
-  const [stats, setStats] = useState(null);
+  const [stats,    setStats]    = useState(null);
+  const [timeline, setTimeline] = useState(FALLBACK_TIMELINE);
+  const [attack,   setAttack]   = useState(FALLBACK_ATTACK);
+  const [mitre,    setMitre]    = useState(FALLBACK_MITRE);
 
   useEffect(() => {
     api.dashboardStats().then(setStats).catch(() => {});
+    api.dashboardCharts().then(data => {
+      if (data.timeline?.length)          setTimeline(data.timeline);
+      if (data.attackDistribution?.length) setAttack(data.attackDistribution);
+      if (data.mitre?.length)             setMitre(data.mitre);
+    }).catch(() => {});
   }, []);
 
   const cbom = stats?.cbom ?? {};
@@ -72,7 +80,7 @@ export default function Dashboard() {
           <CardTitle className="mb-4">Security Events — Last 24 Hours</CardTitle>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={MOCK_TIMELINE}>
+              <AreaChart data={timeline}>
                 <XAxis dataKey="h" tick={{ fill: '#999', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: '#999', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} width={35} />
                 <Tooltip {...TT} />
@@ -88,15 +96,15 @@ export default function Dashboard() {
           <CardContent>
             <ResponsiveContainer width="100%" height={160}>
               <PieChart>
-                <Pie data={MOCK_ATTACK} dataKey="value" cx="50%" cy="50%" outerRadius={70} strokeWidth={0}>
-                  {MOCK_ATTACK.map((_, i) => <Cell key={i} fill={ATTACK_COLORS[i]} />)}
+                <Pie data={attack} dataKey="value" cx="50%" cy="50%" outerRadius={70} strokeWidth={0}>
+                  {attack.map((_, i) => <Cell key={i} fill={ATTACK_COLORS[i % ATTACK_COLORS.length]} />)}
                 </Pie>
                 <Tooltip {...TT} formatter={v => `${v}%`} />
               </PieChart>
             </ResponsiveContainer>
             <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2">
-              {MOCK_ATTACK.map((d, i) => (
-                <span key={d.name} className="font-mono text-[10px] uppercase tracking-ui" style={{ color: ATTACK_COLORS[i] }}>
+              {attack.map((d, i) => (
+                <span key={d.name} className="font-mono text-[10px] uppercase tracking-ui" style={{ color: ATTACK_COLORS[i % ATTACK_COLORS.length] }}>
                   {d.name} {d.value}%
                 </span>
               ))}
@@ -110,7 +118,7 @@ export default function Dashboard() {
           <CardTitle className="mb-4">MITRE ATT&CK Coverage</CardTitle>
           <CardContent>
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={MOCK_MITRE} layout="vertical" barSize={6}>
+              <BarChart data={mitre} layout="vertical" barSize={6}>
                 <XAxis type="number" tick={{ fill: '#999', fontSize: 10, fontFamily: 'monospace' }} axisLine={false} tickLine={false} />
                 <YAxis dataKey="tactic" type="category" tick={{ fill: '#999', fontSize: 9, fontFamily: 'monospace' }} axisLine={false} tickLine={false} width={100} />
                 <Tooltip {...TT} />
