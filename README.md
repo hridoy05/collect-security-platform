@@ -16,6 +16,39 @@ They face three critical problems:
 
 ---
 
+## 📸 Screenshots
+
+### Dashboard
+> Summary stats, 24h event timeline, attack distribution, MITRE ATT&CK coverage
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### CBOM — Cryptographic Bill of Materials
+> Crypto asset inventory, risk ratings (Red/Amber/Green), quantum-vulnerability detection
+
+![CBOM](docs/screenshots/cbom.png)
+
+### Alerts — SIEM
+> Real-time alert feed with Socket.IO push, severity filtering, MITRE tactic tagging
+
+![Alerts](docs/screenshots/alerts.png)
+
+### Threat Intelligence
+> IOC database, CVE tracking with CVSS/EPSS scores, CISA KEV flag
+
+![Threat Intel](docs/screenshots/threat-intel.png)
+
+### ML Anomaly Detection
+> Z-score and Isolation Forest anomaly scores, DNS tunneling entropy analysis
+
+![ML Detection](docs/screenshots/ml-detection.png)
+
+### Network Monitor
+> Protocol distribution, top source IPs, DNS tunneling anomalies
+
+![Network](docs/screenshots/network.png)
+
+---
 
 ## 🏗️ Architecture
 
