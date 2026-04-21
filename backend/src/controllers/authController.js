@@ -12,11 +12,6 @@ const logger = require('../services/loggerService');
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    res.status(400);
-    throw new Error('Email and password required');
-  }
-
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || user.isActive === false) {
