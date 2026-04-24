@@ -16,10 +16,6 @@ const uebaEngine = new UEBAEngine();
  */
 const runZScore = asyncHandler(async (req, res) => {
   const { values, threshold = 3.0 } = req.body;
-  if (!values || !Array.isArray(values)) {
-    res.status(400);
-    throw new Error('values array required');
-  }
   const results = zScoreDetection(values, threshold);
   const anomalies = results.filter(r => r.isAnomaly);
 
@@ -38,11 +34,8 @@ const runZScore = asyncHandler(async (req, res) => {
  */
 const runDnsTunneling = asyncHandler(async (req, res) => {
   const { queries } = req.body;
-  if (!queries) {
-    res.status(400);
-    throw new Error('queries array required');
-  }
 
+  const results = detectDNSTunneling(queries);
   const results = detectDNSTunneling(queries);
   const tunneling = results.filter(r => r.isTunneling);
 
@@ -86,11 +79,8 @@ const runDnsTunneling = asyncHandler(async (req, res) => {
  */
 const runIsolationForest = asyncHandler(async (req, res) => {
   const { trainingData, testData, nTrees = 50 } = req.body;
-  if (!trainingData || !testData) {
-    res.status(400);
-    throw new Error('trainingData and testData required');
-  }
 
+  const forest = new SimpleIsolationForest(nTrees);
   const forest = new SimpleIsolationForest(nTrees);
   forest.fit(trainingData);
   const predictions = forest.predict(testData);

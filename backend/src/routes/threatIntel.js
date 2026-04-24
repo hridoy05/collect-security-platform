@@ -1,23 +1,29 @@
 // ============================================================
-// Threat Intelligence Routes — Topic 6
+// Threat Intelligence Routes 
 // IOC management, CVE tracking, enrichment
 // ============================================================
 const express = require('express');
 const router = express.Router();
-const { 
-  getIocs, 
-  getCves, 
-  lookupIoc, 
-  addIoc, 
-  updateCveStatus, 
-  getThreatSummary 
+const {
+  getIocs,
+  getCves,
+  lookupIoc,
+  addIoc,
+  updateCveStatus,
+  getThreatSummary
 } = require('../controllers/threatIntelController');
+const { validate } = require('../middleware/validate');
+const {
+  lookupIocValidator,
+  addIocValidator,
+  updateCveStatusValidator
+} = require('../validators/threatIntelValidator');
 
 router.get('/iocs', getIocs);
 router.get('/cves', getCves);
-router.post('/lookup', lookupIoc);
-router.post('/iocs', addIoc);
-router.patch('/cves/:id/status', updateCveStatus);
+router.post('/lookup', lookupIocValidator, validate, lookupIoc);
+router.post('/iocs', addIocValidator, validate, addIoc);
+router.patch('/cves/:id/status', updateCveStatusValidator, validate, updateCveStatus);
 router.get('/summary', getThreatSummary);
 
 module.exports = router;
