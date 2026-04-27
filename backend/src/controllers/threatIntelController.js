@@ -64,10 +64,6 @@ const getCves = asyncHandler(async (req, res) => {
  */
 const lookupIoc = asyncHandler(async (req, res) => {
   const { indicator, type } = req.body;
-  if (!indicator || !type) {
-    res.status(400);
-    throw new Error('indicator and type required');
-  }
 
   const intel = await prisma.threatIndicator.findFirst({
     where: { iocValue: indicator, iocType: type, isActive: true }

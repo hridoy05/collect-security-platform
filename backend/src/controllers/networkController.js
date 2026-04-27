@@ -113,10 +113,6 @@ const getTopIps = asyncHandler(async (req, res) => {
  */
 const analyzeDnsQueries = asyncHandler(async (req, res) => {
   const { queries } = req.body;
-  if (!queries || !Array.isArray(queries)) {
-    res.status(400);
-    throw new Error('queries array required');
-  }
   const results = detectDNSTunneling(queries);
   res.json(results);
 });
