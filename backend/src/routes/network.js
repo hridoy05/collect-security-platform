@@ -9,7 +9,7 @@ const {
   getDnsAnomalies,
   getTopIps,
   analyzeDnsQueries
-} = require('../controllers/networkController');
+} = require('../controllers/network');
 const { validate } = require('../middleware/validate');
 const { analyzeDnsValidator } = require('../validators/networkValidator');
 

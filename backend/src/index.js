@@ -20,14 +20,13 @@ const mlRoutes = require('./routes/ml');
 const networkRoutes = require('./routes/network');
 
 // Services
-const { initElasticsearch } = require('./services/elasticService');
+const { initElasticsearch } = require('./infrastructure/elasticsearch/bootstrap');
+const logger = require('./infrastructure/logging/logger');
 const { startCertScanner } = require('./jobs/certScanner');
 const { startSiemCorrelator } = require('./jobs/siemCorrelator');
 const { auditMiddleware } = require('./middleware/audit');
-const prisma = require('./config/prismaClient');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
-const logger = require('./services/loggerService');
-const { getDashboardStats, getDashboardCharts } = require('./controllers/dashboardController');
+const { getDashboardStats, getDashboardCharts } = require('./controllers/dashboard');
 const { authenticateToken } = require('./middleware/auth');
 
 const app = express();

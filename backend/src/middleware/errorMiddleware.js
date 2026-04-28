@@ -1,8 +1,8 @@
 // ============================================================
-const logger = require('../services/loggerService');
+const logger = require('../infrastructure/logging/logger');
 
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  const statusCode = err.statusCode || (res.statusCode === 200 ? 500 : res.statusCode);
   
   // Log the error for observability
   logger.error(`${req.method} ${req.url}`, { message: err.message, stack: err.stack, path: req.url });

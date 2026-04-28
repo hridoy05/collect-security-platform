@@ -3,7 +3,7 @@
 // Implements: Z-Score, IQR, Isolation Forest, UEBA, Entropy
 // ============================================================
 
-const { calculateEntropy } = require('./cryptoService');
+const { calculateEntropy } = require('../crypto');
 
 // ─────────────────────────────────────────
 // Z-SCORE DETECTION

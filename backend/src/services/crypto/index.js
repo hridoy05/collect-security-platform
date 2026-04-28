@@ -1,5 +1,4 @@
 // ============================================================
-// Crypto Service — Topic 1 + 2
 // AES-256-GCM encryption, bcrypt hashing, key management
 // Quantum-safe awareness
 // ============================================================
@@ -15,7 +14,6 @@ const CURRENT_KEY_VERSION = 'v1';
 
 // ─────────────────────────────────────────
 // SYMMETRIC ENCRYPTION — AES-256-GCM
-// Topic 1: Why GCM?
 // GCM = encryption + authentication tag
 // If ciphertext is tampered with → decryption throws
 // CBC does NOT provide this guarantee — always use GCM
@@ -79,7 +77,6 @@ function decrypt(encryptedObj) {
 
 // ─────────────────────────────────────────
 // PASSWORD HASHING — bcrypt
-// Topic 1: Why bcrypt not SHA-256?
 // bcrypt is SLOW by design — cost factor 12
 // SHA-256 can do 10 billion hashes/second on GPU
 // bcrypt with cost 12 ≈ 200ms/hash
@@ -88,7 +85,6 @@ function decrypt(encryptedObj) {
 
 async function hashPassword(password) {
   // bcrypt automatically generates and embeds the salt
-  // Topic 1: Salt prevents rainbow table attacks
   return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
@@ -97,7 +93,6 @@ async function verifyPassword(password, hash) {
 }
 
 // ─────────────────────────────────────────
-// HMAC — Topic 1: Message Authentication
 // Used for API request signing, webhook validation
 // Combines key + data to prove both integrity AND authenticity
 // ─────────────────────────────────────────
@@ -119,7 +114,6 @@ function verifyHMAC(data, secret, expectedHMAC) {
 }
 
 // ─────────────────────────────────────────
-// QUANTUM RISK ASSESSMENT — Topic 2
 // Assess whether an algorithm is quantum-safe
 // ─────────────────────────────────────────
 
@@ -167,7 +161,7 @@ function assessAlgorithmRisk(algorithm) {
 }
 
 // ─────────────────────────────────────────
-// SHANNON ENTROPY — Topic 8
+// SHANNON ENTROPY — 
 // Used for DNS tunneling detection
 // High entropy in domain names = encoded data
 // ─────────────────────────────────────────
@@ -186,7 +180,7 @@ function calculateEntropy(str) {
 
 // ─────────────────────────────────────────
 // KEY MANAGEMENT
-// Topic 7: Keys from environment/secrets manager
+// Keys from environment/secrets manager
 // ─────────────────────────────────────────
 
 function getEncryptionKey(version = CURRENT_KEY_VERSION) {
