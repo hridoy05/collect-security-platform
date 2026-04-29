@@ -10,7 +10,7 @@ const {
   updateUebaProfile,
   scoreUebaEvent,
   getAnomalies
-} = require('../controllers/mlController');
+} = require('../controllers/ml');
 const { validate } = require('../middleware/validate');
 const {
   zScoreValidator,

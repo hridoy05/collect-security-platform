@@ -4,7 +4,7 @@ const {
   upsertAsset, 
   getRiskSummary, 
   generateMigrationRoadmap 
-} = require('../services/cbomService');
+} = require('../../services/cbom');
 
 /**
  * @desc    Get all crypto assets with filtering

@@ -8,7 +8,7 @@ const {
   createAlert,
   updateAlertStatus,
   runCorrelation
-} = require('../controllers/alertController');
+} = require('../controllers/alerts');
 const { validate } = require('../middleware/validate');
 const {
   createAlertValidator,

@@ -3,7 +3,7 @@
 // ============================================================
 const express = require('express');
 const router = express.Router();
-const { login, getCurrentUser } = require('../controllers/authController');
+const { login, getCurrentUser } = require('../controllers/auth');
 const { authenticateToken } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 const { loginValidator } = require('../validators/authValidator');

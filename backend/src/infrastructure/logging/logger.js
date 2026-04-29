@@ -1,13 +1,14 @@
 const winston = require('winston');
-const { indexAppLog } = require('./elasticService');
+const { indexAppLog } = require('../../repositories/logging');
 
-// Custom format for clean console output
 const consoleFormat = winston.format.printf(({ level, message, timestamp, ...metadata }) => {
-  let msg = `[${timestamp}] ${level}: ${message}`;
+  let line = `[${timestamp}] ${level}: ${message}`;
+
   if (Object.keys(metadata).length > 0 && metadata.service !== 'connect-security') {
-    msg += ` ${JSON.stringify(metadata)}`;
+    line += ` ${JSON.stringify(metadata)}`;
   }
-  return msg;
+
+  return line;
 });
 
 const winstonLogger = winston.createLogger({
@@ -19,30 +20,30 @@ const winstonLogger = winston.createLogger({
     consoleFormat
   ),
   defaultMeta: { service: 'connect-security' },
-  transports: [
-    new winston.transports.Console()
-  ]
+  transports: [new winston.transports.Console()]
 });
 
-// Wrapper service to bridge Winston with Elasticsearch
 const logger = {
-  info: (message, meta = {}) => {
+  info(message, meta = {}) {
     winstonLogger.info(message, meta);
     indexAppLog({ level: 'info', message, service: 'backend', metadata: meta });
   },
-  warn: (message, meta = {}) => {
+  warn(message, meta = {}) {
     winstonLogger.warn(message, meta);
     indexAppLog({ level: 'warn', message, service: 'backend', metadata: meta });
   },
-  error: (message, meta = {}) => {
-    // metadata can be an Error object
-    const metaData = meta instanceof Error ? { stack: meta.stack, message: meta.message } : meta;
-    winstonLogger.error(message, metaData);
-    indexAppLog({ level: 'error', message: message || metaData.message, service: 'backend', metadata: metaData });
+  error(message, meta = {}) {
+    const metadata = meta instanceof Error ? { stack: meta.stack, message: meta.message } : meta;
+    winstonLogger.error(message, metadata);
+    indexAppLog({
+      level: 'error',
+      message: message || metadata.message,
+      service: 'backend',
+      metadata
+    });
   },
-  debug: (message, meta = {}) => {
+  debug(message, meta = {}) {
     winstonLogger.debug(message, meta);
-    // Usually don't send debug logs to ES to save space
   }
 };
 

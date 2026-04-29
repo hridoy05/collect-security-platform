@@ -8,7 +8,7 @@ const {
   getCbomSummary,
   getMigrationRoadmap,
   upsertCbomAsset
-} = require('../controllers/cbomController');
+} = require('../controllers/cbom');
 const { validate } = require('../middleware/validate');
 const { upsertAssetValidator } = require('../validators/cbomValidator');
 

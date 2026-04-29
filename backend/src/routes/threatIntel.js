@@ -11,7 +11,7 @@ const {
   addIoc,
   updateCveStatus,
   getThreatSummary
-} = require('../controllers/threatIntelController');
+} = require('../controllers/threatIntel');
 const { validate } = require('../middleware/validate');
 const {
   lookupIocValidator,

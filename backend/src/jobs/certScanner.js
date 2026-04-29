@@ -6,7 +6,7 @@
 
 const tls = require('tls');
 const cron = require('node-cron');
-const { upsertAsset } = require('../services/cbomService');
+const { upsertAsset } = require('../services/cbom');
 
 const HOSTS_TO_SCAN = [
   'api.paybdapp.com',
