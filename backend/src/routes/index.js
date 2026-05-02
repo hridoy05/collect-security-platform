@@ -6,7 +6,7 @@ const alertRoutes = require('./alerts');
 const threatIntelRoutes = require('./threatIntel');
 const mlRoutes = require('./ml');
 const networkRoutes = require('./network');
-const { getDashboardStats, getDashboardCharts } = require('../controllers/dashboardController');
+const { getDashboardStats, getDashboardCharts } = require('../controllers/dashboard');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();

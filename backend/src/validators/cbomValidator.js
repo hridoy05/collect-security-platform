@@ -1,10 +1,22 @@
 const { body } = require('express-validator');
 
 const upsertAssetValidator = [
-  body('asset_id').notEmpty().withMessage('Asset ID is required'),
-  body('asset_type').notEmpty().withMessage('Asset type is required'),
-  body('algorithm').notEmpty().withMessage('Algorithm is required'),
-  body('risk_rating').isIn(['red', 'amber', 'green']).withMessage('Invalid risk rating')
+  body('asset_id').trim().notEmpty().withMessage('Asset ID is required'),
+  body('asset_type').trim().notEmpty().withMessage('Asset type is required'),
+  body('algorithm').trim().notEmpty().withMessage('Algorithm is required'),
+  body('system_name').trim().notEmpty().withMessage('System name is required'),
+  body('key_length')
+    .optional({ checkFalsy: true, nullable: true })
+    .isInt({ min: 1 })
+    .withMessage('Key length must be a positive integer'),
+  body('expiry_date')
+    .optional({ checkFalsy: true, nullable: true })
+    .isISO8601()
+    .withMessage('Expiry date must be a valid date'),
+  body('last_rotated')
+    .optional({ checkFalsy: true, nullable: true })
+    .isISO8601()
+    .withMessage('Last rotated must be a valid date')
 ];
 
 module.exports = {

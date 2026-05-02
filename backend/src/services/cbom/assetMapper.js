@@ -25,13 +25,22 @@ function toPrismaUpsertPayload(asset) {
   return {
     where: { assetId: asset.asset_id },
     update: {
+      assetType: asset.asset_type,
       algorithm: asset.algorithm,
       keyLength: asset.key_length,
+      hashAlgorithm: asset.hash_algorithm,
+      systemName: asset.system_name,
+      environment: asset.environment,
+      ownerTeam: asset.owner_team,
+      issuer: asset.issuer,
       expiryDate,
       daysToExpiry: asset.days_to_expiry,
+      lastRotated,
+      rotationPolicy: asset.rotation_policy,
       quantumSafe: asset.quantum_safe,
       riskRating: asset.risk_rating,
       issues: asset.issues,
+      notes: asset.notes,
       updatedAt: new Date()
     },
     create: {

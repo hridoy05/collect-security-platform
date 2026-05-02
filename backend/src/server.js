@@ -3,7 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 const createApp = require('./app');
-const logger = require('./services/loggerService');
+const logger = require('./infrastructure/logging/logger');
 
 function attachSocketHandlers(io) {
   io.on('connection', (socket) => {
