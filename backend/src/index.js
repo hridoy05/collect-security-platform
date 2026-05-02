@@ -1,10 +1,10 @@
 require('dotenv').config();
 const createServer = require('./server');
 
-const { initElasticsearch } = require('./services/elasticService');
+const { initElasticsearch } = require('./infrastructure/elasticsearch/bootstrap');
 const { startCertScanner } = require('./jobs/certScanner');
 const { startSiemCorrelator } = require('./jobs/siemCorrelator');
-const logger = require('./services/loggerService');
+const logger = require('./infrastructure/logging/logger');
 
 const PORT = process.env.PORT || 4000;
 const { app, server, io } = createServer();

@@ -49,6 +49,7 @@ export const api = {
   cbom:        (path = '') => req(`/api/cbom${path}`),
   cbomSummary: ()          => req('/api/cbom/summary'),
   cbomRoadmap: ()          => req('/api/cbom/migration-roadmap'),
+  createCbomAsset: (data)  => req('/api/cbom', { method: 'POST', body: JSON.stringify(data) }),
 
   // Alerts
   alerts:      (path = '') => req(`/api/alerts${path}`),
