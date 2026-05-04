@@ -2,16 +2,16 @@
   "name": "connect-security-backend",
   "version": "1.0.0",
   "description": "Connect Security Analytics Platform - Backend API",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
-    "db:migrate": "node src/scripts/migrate.js",
-    "db:seed": "node src/scripts/seed.js",
-    "simulate:bruteforce": "node src/scripts/simulate/bruteforce.js",
-    "simulate:dnstunnel": "node src/scripts/simulate/dnsTunnel.js",
-    "simulate:exfil": "node src/scripts/simulate/exfiltration.js",
-    "ml:detect": "node src/scripts/runMlDetection.js"
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "db:migrate": "tsx src/scripts/migrate.ts",
+    "db:seed": "tsx src/scripts/seed.ts",
+    "simulate:bruteforce": "tsx src/scripts/simulate/bruteforce.ts",
+    "simulate:dnstunnel": "tsx src/scripts/simulate/dnsTunnel.ts",
+    "simulate:exfil": "tsx src/scripts/simulate/exfiltration.ts"
   },
   "dependencies": {
     "@aws-sdk/client-kms": "^3.500.0",
@@ -33,7 +33,16 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3",
-    "prisma": "^6.19.3"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.2",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.11.10",
+    "@types/uuid": "^10.0.0",
+    "prisma": "^6.19.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }
