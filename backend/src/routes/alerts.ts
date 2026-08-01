@@ -14,10 +14,11 @@ import {
   createAlertValidator,
   updateAlertStatusValidator
 } from '../validators/alertsValidator';
+import { writeLimiter, correlationLimiter } from '../middleware/rateLimiter';
 
 router.get('/', getAlerts);
-router.post('/', createAlertValidator, validate, createAlert);
-router.patch('/:id/status', updateAlertStatusValidator, validate, updateAlertStatus);
-router.post('/correlate', runCorrelation);
+router.post('/', writeLimiter, createAlertValidator, validate, createAlert);
+router.patch('/:id/status', writeLimiter, updateAlertStatusValidator, validate, updateAlertStatus);
+router.post('/correlate', correlationLimiter, runCorrelation);
 
 export default router;

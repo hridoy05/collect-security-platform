@@ -17,12 +17,13 @@ import {
   dnsTunnelingValidator,
   uebaProfileValidator
 } from '../validators/mlValidator';
+import { mlLimiter } from '../middleware/rateLimiter';
 
-router.post('/zscore', zScoreValidator, validate, runZScore);
-router.post('/dns-tunneling', dnsTunnelingValidator, validate, runDnsTunneling);
-router.post('/isolation-forest', runIsolationForest); // Add forest validator if needed later
-router.post('/ueba/update', uebaProfileValidator, validate, updateUebaProfile);
-router.post('/ueba/score', scoreUebaEvent);
+router.post('/zscore', mlLimiter, zScoreValidator, validate, runZScore);
+router.post('/dns-tunneling', mlLimiter, dnsTunnelingValidator, validate, runDnsTunneling);
+router.post('/isolation-forest', mlLimiter, runIsolationForest);
+router.post('/ueba/update', mlLimiter, uebaProfileValidator, validate, updateUebaProfile);
+router.post('/ueba/score', mlLimiter, scoreUebaEvent);
 router.get('/anomalies', getAnomalies);
 
 export default router;
