@@ -12,10 +12,11 @@ import {
 } from '../controllers/network';
 import { validate } from '../middleware/validate';
 import { analyzeDnsValidator } from '../validators/networkValidator';
+import { mlLimiter } from '../middleware/rateLimiter';
 
 router.get('/protocols', getProtocolStats);
 router.get('/dns-anomalies', getDnsAnomalies);
 router.get('/top-ips', getTopIps);
-router.post('/analyze-dns', analyzeDnsValidator, validate, analyzeDnsQueries);
+router.post('/analyze-dns', mlLimiter, analyzeDnsValidator, validate, analyzeDnsQueries);
 
 export default router;

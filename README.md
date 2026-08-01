@@ -14,8 +14,51 @@ They face three critical problems:
 2. **No real-time detection** of attacks (brute force, credential stuffing, data exfiltration)
 3. **No behavioral intelligence** — unknown attacks and insider threats go undetected
 
+## What This Project Does
+The Connect Security Analytics Platform is a high-performance, enterprise-grade Security Operations Center (SOC) backend backend designed to seamlessly aggregate, analyze, and correlate complex telemetry. Built on a modernized Node.js and PostgreSQL architecture integrated deeply with the Elasticsearch (ELK) stack, the platform processes systemic logs to actively identify and mitigate cyber threats. 
+
+It specializes in bridging traditional signature-based alerting with advanced Machine Learning User and Entity Behavior Analytics (UEBA), while simultaneously offering niche capabilities like proactive Cryptographic Bill of Materials (CBOM) management to prepare infrastructures for the post-quantum cryptography computing era.
+
+## Feature Listing
+1. **Identity & Access Management (IAM):** Stateless but fiercely protected role-based access control utilizing signed JSON Web Tokens (JWT), robust password hashing (`bcrypt`), and strict rate limiting.
+2. **Cryptographic Bill of Materials (CBOM):** Dynamic inventorying and risk assessment of deployed certificates and keys, generating prioritized roadmaps against quantum-vulnerable configurations. 
+3. **SIEM & Alerting Engine:** Highly scalable log correlation natively offloading aggregation math to Elasticsearch to generate actionable Mitre ATT&CK mapped incidents in real-time.
+4. **Threat Intelligence Lifecycle:** Continuous intersection of live network data against internally managed Indicators of Compromise (IOCs) and prioritized CVE tracking based on real-world exploitability (EPSS/CISA KEV).
+5. **Machine Learning & UEBA:** Behavioral profiling and statistical thresholding (Isolation Forest, Z-Score) engineered to spot anomalies like DNS tunneling exfiltration or compromised insider threats without relying on fixed rules.
+6. **Network Intrusion Monitoring:** Fast aggregation of firewall logs, DNS queries, and TCP/UDP communication mapped directly to geographic locations.
+7. **Observability & Platform Audit:** Complete zero-latency compliance recording via asynchronous middleware, alongside thorough application error tracing piped straight into customized system health dashboards.
 ---
 
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  React Dashboard                     │
+│         (CBOM · SIEM · Alerts · ML Scores)          │
+└──────────────────────┬──────────────────────────────┘
+                       │ REST API + WebSocket
+┌──────────────────────▼──────────────────────────────┐
+│              Node.js API Server                      │
+│   Express · JWT Auth · Crypto Service · ML Engine   │
+└────────┬──────────────────────────┬─────────────────┘
+         │                          │
+┌────────▼────────┐      ┌──────────▼──────────────┐
+│   PostgreSQL    │      │      Elasticsearch        │
+│  Users · Keys  │      │  Logs · CBOM · Alerts     │
+│  Audit Logs    │      │  ML Results · Threat Intel │
+└─────────────────┘      └──────────────────────────┘
+                                   ▲
+                         ┌─────────┴──────────┐
+
+                         │      Logstash       │
+                         │  Parse · Normalize  │
+                         │  Enrich · Index     │
+                         └─────────▲──────────┘
+                                   │
+              ┌────────────────────┼──────────────┐
+              │                    │              │
+        App Logs            Firewall Logs    System Logs
+```
 ## 📸 Screenshots
 
 ### Dashboard
@@ -49,49 +92,6 @@ They face three critical problems:
 ![Network](docs/screenshots/network.png)
 
 ---
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│                  React Dashboard                     │
-│         (CBOM · SIEM · Alerts · ML Scores)          │
-└──────────────────────┬──────────────────────────────┘
-                       │ REST API + WebSocket
-┌──────────────────────▼──────────────────────────────┐
-│              Node.js API Server                      │
-│   Express · JWT Auth · Crypto Service · ML Engine   │
-└────────┬──────────────────────────┬─────────────────┘
-         │                          │
-┌────────▼────────┐      ┌──────────▼──────────────┐
-│   PostgreSQL    │      │      Elasticsearch        │
-│  Users · Keys  │      │  Logs · CBOM · Alerts     │
-│  Audit Logs    │      │  ML Results · Threat Intel │
-└─────────────────┘      └──────────────────────────┘
-                                   ▲
-                         ┌─────────┴──────────┐
-                         │      Logstash       │
-                         │  Parse · Normalize  │
-                         │  Enrich · Index     │
-                         └─────────▲──────────┘
-                                   │
-              ┌────────────────────┼──────────────┐
-              │                    │              │
-        App Logs            Firewall Logs    System Logs
-```
-## What This Project Does
-The Connect Security Analytics Platform is a high-performance, enterprise-grade Security Operations Center (SOC) backend backend designed to seamlessly aggregate, analyze, and correlate complex telemetry. Built on a modernized Node.js and PostgreSQL architecture integrated deeply with the Elasticsearch (ELK) stack, the platform processes systemic logs to actively identify and mitigate cyber threats. 
-
-It specializes in bridging traditional signature-based alerting with advanced Machine Learning User and Entity Behavior Analytics (UEBA), while simultaneously offering niche capabilities like proactive Cryptographic Bill of Materials (CBOM) management to prepare infrastructures for the post-quantum cryptography computing era.
-
-## Feature Listing
-1. **Identity & Access Management (IAM):** Stateless but fiercely protected role-based access control utilizing signed JSON Web Tokens (JWT), robust password hashing (`bcrypt`), and strict rate limiting.
-2. **Cryptographic Bill of Materials (CBOM):** Dynamic inventorying and risk assessment of deployed certificates and keys, generating prioritized roadmaps against quantum-vulnerable configurations. 
-3. **SIEM & Alerting Engine:** Highly scalable log correlation natively offloading aggregation math to Elasticsearch to generate actionable Mitre ATT&CK mapped incidents in real-time.
-4. **Threat Intelligence Lifecycle:** Continuous intersection of live network data against internally managed Indicators of Compromise (IOCs) and prioritized CVE tracking based on real-world exploitability (EPSS/CISA KEV).
-5. **Machine Learning & UEBA:** Behavioral profiling and statistical thresholding (Isolation Forest, Z-Score) engineered to spot anomalies like DNS tunneling exfiltration or compromised insider threats without relying on fixed rules.
-6. **Network Intrusion Monitoring:** Fast aggregation of firewall logs, DNS queries, and TCP/UDP communication mapped directly to geographic locations.
-7. **Observability & Platform Audit:** Complete zero-latency compliance recording via asynchronous middleware, alongside thorough application error tracing piped straight into customized system health dashboards.
 
 ## Future Improvements Roadmap
 To continuously evolve the platform into a best-in-class security ecosystem, the following enhancements are planned:

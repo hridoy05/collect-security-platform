@@ -18,12 +18,13 @@ import {
   addIocValidator,
   updateCveStatusValidator
 } from '../validators/threatIntelValidator';
+import { writeLimiter, lookupLimiter } from '../middleware/rateLimiter';
 
 router.get('/iocs', getIocs);
 router.get('/cves', getCves);
-router.post('/lookup', lookupIocValidator, validate, lookupIoc);
-router.post('/iocs', addIocValidator, validate, addIoc);
-router.patch('/cves/:id/status', updateCveStatusValidator, validate, updateCveStatus);
+router.post('/lookup', lookupLimiter, lookupIocValidator, validate, lookupIoc);
+router.post('/iocs', writeLimiter, addIocValidator, validate, addIoc);
+router.patch('/cves/:id/status', writeLimiter, updateCveStatusValidator, validate, updateCveStatus);
 router.get('/summary', getThreatSummary);
 
 export default router;
